@@ -7,6 +7,7 @@ from beancount.core import data
 from beancount.core import account
 from beancount.core import getters
 from beancount.core.data import Custom
+from datetime import datetime
 
 __plugins__ = ('metadata_spray_entries',)
 
@@ -48,7 +49,14 @@ def metadata_spray(entry,
             elif replace_type == 'dont_overwrite':
                 continue
 
-        entry_meta[metadata_key] = metadata_dict[metadata_key]
+        value = metadata_dict[metadata_key]
+
+        try:
+            value = datetime.strptime(value, '%Y-%m-%d').date()
+        except ValueError:
+            pass
+
+        entry_meta[metadata_key] = value
 
     return entry_meta, errors
 
